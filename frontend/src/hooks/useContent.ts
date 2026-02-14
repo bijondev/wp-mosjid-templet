@@ -50,11 +50,15 @@ export const useEvents = (limit = 3) => {
     });
 };
 
-export const useEvent = (id: string | undefined) => {
+export const useEvent = (slug?: string) => {
     return useQuery({
-        queryKey: ['event', id],
-        queryFn: () => id ? fetchSinglePost<MosqueEvent>('/wp/v2/mosque_event', id) : Promise.reject('No ID provided'),
-        enabled: !!id,
+        queryKey: ['event', slug],
+        queryFn: async () => {
+            if (!slug) return Promise.reject('No slug provided');
+            const events = await fetchPosts<MosqueEvent>('/wp/v2/mosque_event', { slug });
+            return events.length > 0 ? events[0] : null;
+        },
+        enabled: !!slug,
     });
 };
 
@@ -65,11 +69,15 @@ export const useServices = (limit = 3) => {
     });
 };
 
-export const useService = (id: string | undefined) => {
+export const useService = (slug?: string) => {
     return useQuery({
-        queryKey: ['service', id],
-        queryFn: () => id ? fetchSinglePost<MosqueService>('/wp/v2/mosque_service', id) : Promise.reject('No ID provided'),
-        enabled: !!id,
+        queryKey: ['service', slug],
+        queryFn: async () => {
+            if (!slug) return Promise.reject('No slug provided');
+            const services = await fetchPosts<MosqueService>('/wp/v2/mosque_service', { slug });
+            return services.length > 0 ? services[0] : null;
+        },
+        enabled: !!slug,
     });
 };
 

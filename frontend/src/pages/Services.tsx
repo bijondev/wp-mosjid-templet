@@ -37,13 +37,13 @@ export default function Services() {
                             {getIcon(service.meta?.service_icon || '')}
                         </div>
                         <h3 className="text-2xl font-bold mb-4">
-                            <Link to={`/services/${service.id}`} className="hover:text-primary transition-colors" dangerouslySetInnerHTML={{ __html: service.title.rendered }} />
+                            <Link to={`/services/${service.slug}`} className="hover:text-primary transition-colors" dangerouslySetInnerHTML={{ __html: service.title.rendered }} />
                         </h3>
                         <div className="text-gray-600 mb-6 text-sm line-clamp-3" dangerouslySetInnerHTML={{ __html: service.excerpt.rendered }} />
 
                         <div className="mt-auto pt-6 border-t border-gray-50">
                             <Link
-                                to={`/services/${service.id}`}
+                                to={`/services/${service.slug}`}
                                 className="inline-flex items-center text-primary font-bold hover:underline"
                             >
                                 Learn More <ExternalLink className="w-4 h-4 ml-1" />

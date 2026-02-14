@@ -40,7 +40,7 @@ export default function Home() {
             const slidesWithQuotes = cptSlides.map((slide: any) => {
                 const randomQuote = islamicQuotes[Math.floor(Math.random() * islamicQuotes.length)];
                 return {
-                    image: slide._embedded?.['wp:featuredmedia']?.[0]?.source_url || slide.thumbnail_url || branding.mainImageUrl,
+                    image: slide._embedded?.['wp:featuredmedia']?.[0]?.source_url || slide.thumbnail_url || branding?.mainImageUrl || '',
                     quote: randomQuote
                 };
             }).filter((s: any) => s.image);
@@ -124,10 +124,53 @@ export default function Home() {
         return url;
     };
 
+    // Show loader while essential data is loading
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-white to-primary/10">
+                <Helmet>
+                    <title>Home | {branding?.mosqueName || 'Masjid Baitun Noor'}</title>
+                </Helmet>
+                <div className="text-center">
+                    {/* Animated Mosque Icon */}
+                    <div className="relative mb-8">
+                        <div className="w-24 h-24 mx-auto">
+                            {/* Outer rotating ring */}
+                            <div className="absolute inset-0 border-4 border-primary/20 rounded-full animate-spin" style={{ animationDuration: '3s' }}></div>
+                            {/* Middle pulsing ring */}
+                            <div className="absolute inset-2 border-4 border-primary/40 rounded-full animate-pulse"></div>
+                            {/* Inner star/crescent shape */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-12 h-12 bg-primary rounded-full animate-pulse flex items-center justify-center">
+                                    <Heart className="w-6 h-6 text-white fill-white" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Loading Text */}
+                    <h2 className="text-2xl font-bold text-gray-800 mb-2 animate-fade-in-up">
+                        {branding?.mosqueName || 'Masjid Baitun Noor'}
+                    </h2>
+                    <p className="text-gray-600 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                        Loading...
+                    </p>
+
+                    {/* Animated dots */}
+                    <div className="flex justify-center gap-2 mt-6">
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-12">
             <Helmet>
-                <title>Home | {branding.mosqueName}</title>
+                <title>Home | {branding?.mosqueName || 'Masjid Baitun Noor'}</title>
             </Helmet>
 
             {/* Hero Section */}
@@ -276,10 +319,10 @@ export default function Home() {
                                 {getIcon(service.meta?.service_icon || '')}
                             </div>
                             <h3 className="text-xl font-bold mb-3 font-outfit">
-                                <Link to={`/services/${service.id}`} className="hover:text-primary transition-colors" dangerouslySetInnerHTML={{ __html: service.title.rendered }} />
+                                <Link to={`/services/${service.slug}`} className="hover:text-primary transition-colors" dangerouslySetInnerHTML={{ __html: service.title.rendered }} />
                             </h3>
                             <div className="text-gray-600 text-sm line-clamp-3 mb-6 leading-relaxed" dangerouslySetInnerHTML={{ __html: service.excerpt.rendered }} />
-                            <Link to={`/services/${service.id}`} className="mt-auto inline-flex items-center justify-center py-2 px-4 rounded-full border border-primary/20 text-primary text-sm font-bold hover:bg-primary hover:text-white transition-all group-hover:border-primary">
+                            <Link to={`/services/${service.slug}`} className="mt-auto inline-flex items-center justify-center py-2 px-4 rounded-full border border-primary/20 text-primary text-sm font-bold hover:bg-primary hover:text-white transition-all group-hover:border-primary">
                                 Learn More <ExternalLink className="w-4 h-4 ml-2" />
                             </Link>
                         </div>
@@ -310,7 +353,7 @@ export default function Home() {
                                             </div>
                                             <div className="ml-4 flex-grow">
                                                 <h3 className="font-bold text-lg">
-                                                    <Link to={`/events/${event.id}`} className="hover:text-primary transition-colors" dangerouslySetInnerHTML={{ __html: event.title.rendered }} />
+                                                    <Link to={`/events/${event.slug}`} className="hover:text-primary transition-colors" dangerouslySetInnerHTML={{ __html: event.title.rendered }} />
                                                 </h3>
                                                 <p className="text-gray-500 text-sm flex items-center mt-1">
                                                     <Clock className="w-4 h-4 mr-1" /> {event.meta?.event_time || 'TBA'}
@@ -321,7 +364,7 @@ export default function Home() {
                                                     )}
                                                 </p>
                                                 <div className="text-gray-600 mt-2 text-sm line-clamp-2" dangerouslySetInnerHTML={{ __html: event.excerpt.rendered }} />
-                                                <Link to={`/events/${event.id}`} className="mt-2 text-primary text-xs font-bold hover:underline inline-flex items-center">
+                                                <Link to={`/events/${event.slug}`} className="mt-2 text-primary text-xs font-bold hover:underline inline-flex items-center">
                                                     Details <ExternalLink className="w-3 h-3 ml-1" />
                                                 </Link>
                                             </div>
@@ -386,7 +429,7 @@ export default function Home() {
                             {sermons?.map((sermon) => (
                                 <Link
                                     key={sermon.id}
-                                    to={`/sermons/${sermon.id}`}
+                                    to={`/sermons/${sermon.slug}`}
                                     className="block bg-white p-4 rounded shadow-sm hover:shadow-md transition-shadow group"
                                 >
                                     <div className="aspect-video bg-gray-200 rounded mb-4 flex items-center justify-center overflow-hidden relative">

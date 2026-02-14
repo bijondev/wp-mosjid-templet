@@ -6,8 +6,8 @@ import { useSettings } from '../context/SettingsContext';
 
 export default function EventDetail() {
     const { branding } = useSettings();
-    const { id } = useParams<{ id: string }>();
-    const { data: event, isLoading, error } = useEvent(id);
+    const { slug } = useParams<{ slug: string }>();
+    const { data: event, isLoading, error } = useEvent(slug);
 
     if (isLoading) {
         return <div className="container mx-auto px-4 py-12 text-center">Loading event details...</div>;

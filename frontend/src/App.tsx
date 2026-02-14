@@ -36,11 +36,11 @@ function App() {
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/donate" element={<Donate />} />
                   <Route path="/events" element={<Events />} />
-                  <Route path="/events/:id" element={<EventDetail />} />
+                  <Route path="/events/:slug" element={<EventDetail />} />
                   <Route path="/services" element={<Services />} />
-                  <Route path="/services/:id" element={<ServiceDetail />} />
+                  <Route path="/services/:slug" element={<ServiceDetail />} />
                   <Route path="/sermons" element={<Sermons />} />
-                  <Route path="/sermons/:id" element={<SermonDetail />} />
+                  <Route path="/sermons/:slug" element={<SermonDetail />} />
                 </Routes>
               </Layout>
             </Router>

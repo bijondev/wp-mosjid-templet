@@ -47,7 +47,7 @@ export default function Sermons() {
                         {sermons.map((sermon) => (
                             <Link
                                 key={sermon.id}
-                                to={`/sermons/${sermon.id}`}
+                                to={`/sermons/${sermon.slug}`}
                                 className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group"
                             >
                                 {/* Thumbnail */}

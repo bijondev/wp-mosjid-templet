@@ -7,18 +7,19 @@ import api from '../utils/api';
 import type { MosqueSermon } from '../types';
 
 export default function SermonDetail() {
-    const { id } = useParams<{ id: string }>();
+    const { slug } = useParams<{ slug: string }>();
     const { branding } = useSettings();
 
     const { data: sermon, isLoading, error } = useQuery({
-        queryKey: ['sermon', id],
+        queryKey: ['sermon', slug],
         queryFn: async () => {
-            const response = await api.get<MosqueSermon>(`/wp/v2/mosque_sermon/${id}`, {
-                params: { _embed: true }
+            if (!slug) return Promise.reject('No slug provided');
+            const response = await api.get<MosqueSermon[]>(`/wp/v2/mosque_sermon`, {
+                params: { slug, _embed: true }
             });
-            return response.data;
+            return response.data.length > 0 ? response.data[0] : null;
         },
-        enabled: !!id,
+        enabled: !!slug,
     });
 
     if (isLoading) {

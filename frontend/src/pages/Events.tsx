@@ -37,7 +37,7 @@ export default function Events() {
                 ) : (
                     events.map((event) => (
                         <div key={event.id} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden flex flex-col">
-                            <Link to={`/events/${event.id}`} className="block h-48 bg-gray-200 relative group overflow-hidden">
+                            <Link to={`/events/${event.slug}`} className="block h-48 bg-gray-200 relative group overflow-hidden">
                                 {event._embedded?.['wp:featuredmedia']?.[0]?.source_url ? (
                                     <img
                                         src={event._embedded['wp:featuredmedia'][0].source_url}
@@ -55,7 +55,7 @@ export default function Events() {
                                     {event.meta?.event_date ? formatDate(event.meta.event_date).dateStr : 'Date TBA'}
                                 </div>
                                 <h3 className="text-xl font-bold mb-2">
-                                    <Link to={`/events/${event.id}`} className="hover:text-primary transition-colors" dangerouslySetInnerHTML={{ __html: event.title.rendered }} />
+                                    <Link to={`/events/${event.slug}`} className="hover:text-primary transition-colors" dangerouslySetInnerHTML={{ __html: event.title.rendered }} />
                                 </h3>
                                 <div className="flex items-center text-gray-500 text-sm mb-4">
                                     <Clock className="w-4 h-4 mr-1" /> {event.meta?.event_time || 'Time TBA'}
@@ -69,7 +69,7 @@ export default function Events() {
 
                                 <div className="mt-auto pt-4 border-t border-gray-50">
                                     <Link
-                                        to={`/events/${event.id}`}
+                                        to={`/events/${event.slug}`}
                                         className="inline-flex items-center text-primary font-bold hover:underline"
                                     >
                                         View Details <ExternalLink className="w-3 h-3 ml-1" />

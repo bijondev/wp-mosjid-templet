@@ -6,8 +6,8 @@ import { useSettings } from '../context/SettingsContext';
 
 export default function ServiceDetail() {
     const { branding } = useSettings();
-    const { id } = useParams<{ id: string }>();
-    const { data: service, isLoading, error } = useService(id);
+    const { slug } = useParams<{ slug: string }>();
+    const { data: service, isLoading, error } = useService(slug);
 
     if (isLoading) {
         return <div className="container mx-auto px-4 py-12 text-center">Loading service details...</div>;
