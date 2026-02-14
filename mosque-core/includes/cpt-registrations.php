@@ -108,6 +108,46 @@ function mosque_register_cpts() {
         'supports'            => array( 'title', 'editor', 'custom-fields' ),
         'show_in_rest'        => false, // Don't expose list via REST for security
     ) );
+
+    // Gallery CPT
+    $gallery_labels = array(
+        'name'               => 'Gallery',
+        'singular_name'      => 'Gallery Item',
+        'menu_name'          => 'Gallery',
+        'add_new'            => 'Add New',
+        'add_new_item'       => 'Add New Gallery Item',
+        'edit_item'          => 'Edit Gallery Item',
+        'new_item'           => 'New Gallery Item',
+        'view_item'          => 'View Gallery Item',
+        'search_items'       => 'Search Gallery',
+        'not_found'          => 'No items found',
+        'not_found_in_trash' => 'No items found in Trash'
+    );
+
+    register_post_type( 'mosque_gallery', array(
+        'labels'              => $gallery_labels,
+        'public'              => true,
+        'has_archive'         => true,
+        'menu_icon'           => 'dashicons-images-alt2',
+        'supports'            => array( 'title', 'thumbnail', 'excerpt' ),
+        'show_in_rest'        => true,
+        'rewrite'             => array( 'slug' => 'gallery' ),
+    ) );
+
+    // Hero Slider CPT
+    register_post_type( 'mosque_hero_slide', array(
+        'labels'              => array(
+            'name'          => 'Hero Slides',
+            'singular_name' => 'Hero Slide',
+            'add_new'       => 'Add New Slide',
+            'add_new_item'  => 'Add New Hero Slide',
+        ),
+        'public'              => true,
+        'has_archive'         => false,
+        'menu_icon'           => 'dashicons-images-alt',
+        'supports'            => array( 'title', 'thumbnail' ),
+        'show_in_rest'        => true,
+    ) );
 }
 add_action( 'init', 'mosque_register_cpts' );
 

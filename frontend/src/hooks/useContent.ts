@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '../utils/api';
-import type { MosqueEvent, MosqueService, MosqueSermon, MosqueDonation } from '../types';
+import type { MosqueEvent, MosqueService, MosqueSermon, MosqueDonation, MosqueGallery, MosqueHeroSlide } from '../types';
 
 // Helper to fetch posts
 const fetchPosts = async <T>(endpoint: string, params: any = {}) => {
@@ -96,5 +96,19 @@ export const usePage = (slug: string) => {
             return pages.length > 0 ? pages[0] : null;
         },
         enabled: !!slug,
+    });
+};
+
+export const useGallery = (limit = 100) => {
+    return useQuery({
+        queryKey: ['gallery', limit],
+        queryFn: () => fetchPosts<MosqueGallery>('/wp/v2/mosque_gallery', { per_page: limit }),
+    });
+};
+
+export const useHeroSlides = (limit = 10) => {
+    return useQuery({
+        queryKey: ['hero-slides', limit],
+        queryFn: () => fetchPosts<MosqueHeroSlide>('/wp/v2/mosque_hero_slide', { per_page: limit }),
     });
 };

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { aladhanApi } from '../utils/api';
 
-interface PrayerTimes {
+export interface PrayerTimes {
     Fajr: string;
     Sunrise: string;
     Dhuhr: string;
@@ -10,7 +10,7 @@ interface PrayerTimes {
     Isha: string;
 }
 
-interface HijriDate {
+export interface HijriDate {
     date: string;
     format: string;
     day: string;
@@ -20,7 +20,7 @@ interface HijriDate {
     designation: { abbreviated: string; expanded: string };
 }
 
-interface PrayerData {
+export interface PrayerData {
     timings: PrayerTimes;
     date: {
         readable: string;

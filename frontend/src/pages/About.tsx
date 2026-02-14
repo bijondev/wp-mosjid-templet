@@ -4,29 +4,29 @@ import { Helmet } from 'react-helmet-async';
 import { BookOpen, Heart, Users, Target } from 'lucide-react';
 
 export default function About() {
-    const { branding } = useSettings();
+    const { branding, aboutHighlights } = useSettings();
     const { data: page, isLoading } = usePage('about-us');
 
     const highlights = [
         {
             icon: <Heart className="w-8 h-8 text-primary" />,
-            title: "Our Mission",
-            description: "To serve Allah and our community by providing religious, educational, and social services that inspire righteousness and compassion."
+            title: aboutHighlights.mission.title,
+            description: aboutHighlights.mission.desc
         },
         {
             icon: <Target className="w-8 h-8 text-primary" />,
-            title: "Our Vision",
-            description: "To be a beacon of Islamic values and a center of excellence for spiritual growth and community development in the region."
+            title: aboutHighlights.vision.title,
+            description: aboutHighlights.vision.desc
         },
         {
             icon: <Users className="w-8 h-8 text-primary" />,
-            title: "Community First",
-            description: "We believe in the power of unity and strive to create an inclusive environment where everyone feels welcome and supported."
+            title: aboutHighlights.community.title,
+            description: aboutHighlights.community.desc
         },
         {
             icon: <BookOpen className="w-8 h-8 text-primary" />,
-            title: "Lifelong Learning",
-            description: "Commitment to providing authentic Islamic knowledge and practical life skills through our various educational programs."
+            title: aboutHighlights.education.title,
+            description: aboutHighlights.education.desc
         }
     ];
 

@@ -2,23 +2,85 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSettings } from '../context/SettingsContext';
 import { usePrayerTimes } from '../hooks/usePrayerTimes';
-import { useEvents, useSermons, useServices } from '../hooks/useContent';
-import { Clock, MapPin, Video, Users, BookOpen, Heart, Globe, ExternalLink } from 'lucide-react';
+import { useEvents, useSermons, useServices, useHeroSlides } from '../hooks/useContent';
+import { Clock, MapPin, Video, Users, BookOpen, Heart, Globe, ExternalLink, Timer, Target, Eye } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { islamicQuotes } from '../data/quotes';
+import { getNextPrayer, formatCountdown } from '../utils/prayerUtils';
+import clsx from 'clsx'; // Added clsx import
 
 export default function Home() {
-    const { branding, contact } = useSettings();
+    const { branding, contact, aboutHighlights } = useSettings();
     const { data: prayerData, isLoading } = usePrayerTimes();
-    const { data: events } = useEvents();
+    const { data: events } = useEvents(3);
     const { data: sermons } = useSermons();
-    const { data: services } = useServices();
-    const [quote, setQuote] = useState(islamicQuotes[0]);
+    const { data: services } = useServices(3);
+    const { data: cptSlides } = useHeroSlides(10);
+    const [currentSlide, setCurrentSlide] = useState(0);
+
+    const fallbacks = [
+        {
+            image: "https://images.unsplash.com/photo-1591604129939-f1efa4d8f7ec?q=80&w=1920&auto=format&fit=crop",
+            quote: islamicQuotes[Math.floor(Math.random() * islamicQuotes.length)]
+        },
+        {
+            image: "https://images.unsplash.com/photo-1591604129939-f1efa4d8f7ec?q=80&w=1920&auto=format&fit=crop",
+            quote: islamicQuotes[Math.floor(Math.random() * islamicQuotes.length)]
+        },
+        {
+            image: "https://images.unsplash.com/photo-1591604129939-f1efa4d8f7ec?q=80&w=1920&auto=format&fit=crop",
+            quote: islamicQuotes[Math.floor(Math.random() * islamicQuotes.length)]
+        }
+    ];
+
+    const [heroSlides, setHeroSlides] = useState<any[]>(fallbacks);
 
     useEffect(() => {
-        const randomIndex = Math.floor(Math.random() * islamicQuotes.length);
-        setQuote(islamicQuotes[randomIndex]);
+        if (cptSlides && cptSlides.length > 0) {
+            const slidesWithQuotes = cptSlides.map((slide: any) => {
+                const randomQuote = islamicQuotes[Math.floor(Math.random() * islamicQuotes.length)];
+                return {
+                    image: slide._embedded?.['wp:featuredmedia']?.[0]?.source_url || slide.thumbnail_url || branding.mainImageUrl,
+                    quote: randomQuote
+                };
+            }).filter((s: any) => s.image);
+
+            if (slidesWithQuotes.length > 0) {
+                setHeroSlides(slidesWithQuotes);
+            }
+        }
+    }, [cptSlides, branding.mainImageUrl]);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setHeroSlides(prev => {
+                if (prev.length === 0) return prev;
+                setCurrentSlide((current) => (current + 1) % prev.length);
+                return prev;
+            });
+        }, 8000);
+        return () => clearInterval(timer);
     }, []);
+
+    const activeSlide = heroSlides[currentSlide] || fallbacks[0];
+
+    // Removed `quote` state as it's now part of `heroSlides`
+    const [currentTime, setCurrentTime] = useState(new Date());
+    const [nextPrayer, setNextPrayer] = useState<any>(null);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    useEffect(() => {
+        if (prayerData?.timings) {
+            setNextPrayer(getNextPrayer(prayerData.timings, currentTime));
+        }
+    }, [prayerData, currentTime]);
+
 
     // Helper to map icon name to component (fallback to Heart)
     const getIcon = (iconName: string) => {
@@ -70,26 +132,45 @@ export default function Home() {
 
             {/* Hero Section */}
             <section className="relative h-[80vh] min-h-[600px] overflow-hidden flex items-center justify-center">
-                {/* Background Image with Ken Burns Effect */}
-                <div className="absolute inset-0 z-0">
-                    <img
-                        src={branding.mainImageUrl || "https://images.unsplash.com/photo-1564121211835-e88c852648ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"}
-                        alt="Mosque"
-                        className="w-full h-full object-cover animate-ken-burns"
-                    />
-                    {/* Sophisticated Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-transparent"></div>
-                    <div className="absolute inset-0 bg-black/20"></div>
-                </div>
+                {/* Background Image Slides */}
+                {heroSlides.map((slide, index) => (
+                    <div
+                        key={index}
+                        className={clsx(
+                            "absolute inset-0 z-0 transition-opacity duration-2000 ease-in-out",
+                            index === currentSlide ? "opacity-100" : "opacity-0"
+                        )}
+                    >
+                        <img
+                            src={slide.image}
+                            alt={`Mosque ${index + 1}`}
+                            className={clsx(
+                                "w-full h-full object-cover",
+                                index === currentSlide && "animate-ken-burns"
+                            )}
+                        />
+                        {/* Sophisticated Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-transparent"></div>
+                        <div className="absolute inset-0 bg-black/30"></div>
+                    </div>
+                ))}
 
                 <div className="relative container mx-auto px-4 text-center z-10">
-                    <h1 className="text-5xl lg:text-8xl font-extrabold mb-6 font-outfit text-white animate-fade-in-up tracking-tight drop-shadow-md">
+                    <h1
+                        key={`title-${currentSlide}`}
+                        className="text-5xl lg:text-8xl font-extrabold mb-6 font-outfit text-white animate-fade-in-up tracking-tight drop-shadow-2xl"
+                    >
                         {branding.mosqueName}
                     </h1>
-                    <p className="text-xl lg:text-2xl mb-12 max-w-2xl mx-auto text-white/90 italic animate-fade-in-up animation-delay-200">
-                        "{quote.text}"
-                        <span className="block text-base not-italic mt-4 font-sans font-medium text-primary">— {quote.source}</span>
-                    </p>
+                    <div
+                        key={`quote-${currentSlide}`}
+                        className="animate-fade-in-up animation-delay-200"
+                    >
+                        <p className="text-xl lg:text-2xl mb-12 max-w-3xl mx-auto text-white/95 italic leading-relaxed">
+                            "{activeSlide.quote.text}"
+                            <span className="block text-base not-italic mt-6 font-sans font-bold text-primary tracking-widest uppercase">— {activeSlide.quote.source}</span>
+                        </p>
+                    </div>
                     <div className="flex flex-wrap gap-6 justify-center animate-fade-in-up animation-delay-400">
                         <Link
                             to="/prayer-times"
@@ -132,15 +213,51 @@ export default function Home() {
                     {isLoading ? (
                         <div className="text-center py-8">Loading prayer times...</div>
                     ) : (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
-                            {['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].map((prayer) => (
-                                <div key={prayer} className="bg-gray-50 p-4 rounded-lg hover:bg-primary hover:text-white transition-colors group">
-                                    <h3 className="text-lg font-semibold text-gray-700 group-hover:text-white">{prayer}</h3>
-                                    <p className="text-xl font-bold text-primary group-hover:text-white">
-                                        {prayerData?.timings[prayer as keyof typeof prayerData.timings].split(' ')[0]}
-                                    </p>
+                        <div>
+                            {nextPrayer && (
+                                <div className="mb-8 flex justify-center">
+                                    <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center gap-4 md:gap-8 animate-pulse-subtle">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-primary text-white p-3 rounded-xl shadow-lg shadow-primary/20">
+                                                <Timer className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold text-primary uppercase tracking-wider">Next Prayer</p>
+                                                <h3 className="text-2xl font-black text-gray-800 font-outfit">{nextPrayer.name} at {nextPrayer.time}</h3>
+                                            </div>
+                                        </div>
+                                        <div className="h-10 w-px bg-gray-200 hidden md:block"></div>
+                                        <div className="text-center md:text-left">
+                                            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Time Remaining</p>
+                                            <p className="text-3xl font-black text-primary font-mono tracking-tighter">
+                                                {formatCountdown(nextPrayer.remainingMs)}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
-                            ))}
+                            )}
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
+                                {['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].map((prayer) => {
+                                    const isNext = nextPrayer?.name === prayer;
+                                    return (
+                                        <div
+                                            key={prayer}
+                                            className={`p-4 rounded-xl transition-all duration-300 transform hover:-translate-y-1 ${isNext
+                                                ? 'bg-primary text-white shadow-xl shadow-primary/30 ring-4 ring-primary/10'
+                                                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                                                }`}
+                                        >
+                                            <h3 className={`text-lg font-bold mb-1 ${isNext ? 'text-white' : 'text-gray-800'}`}>{prayer}</h3>
+                                            <p className={`text-xl font-black ${isNext ? 'text-white' : 'text-primary'}`}>
+                                                {prayerData?.timings[prayer as keyof typeof prayerData.timings].split(' ')[0]}
+                                            </p>
+                                            {isNext && (
+                                                <span className="text-[10px] font-bold uppercase tracking-widest mt-2 block opacity-80">Next</span>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
                     )}
                 </div>
@@ -213,35 +330,87 @@ export default function Home() {
                                 })
                             )}
                         </div>
+                        {/* About Highlights Section */}
+                        <div className="mt-12 bg-gray-100/50 p-8 rounded-3xl border border-gray-200">
+                            <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                                <span className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-3">
+                                    <Heart className="w-5 h-5 text-white" />
+                                </span>
+                                Our Core Values
+                            </h2>
+                            <div className="grid grid-cols-1 gap-6">
+                                {/* Mission */}
+                                <div className="bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-all group animate-fade-in-up">
+                                    <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                        <Target className="w-6 h-6" />
+                                    </div>
+                                    <h3 className="font-bold text-gray-800 mb-2">{aboutHighlights.mission.title}</h3>
+                                    <p className="text-gray-600 text-sm leading-relaxed">{aboutHighlights.mission.desc}</p>
+                                </div>
+                                {/* Vision */}
+                                <div className="bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-all group animate-fade-in-up animation-delay-200">
+                                    <div className="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                                        <Eye className="w-6 h-6" />
+                                    </div>
+                                    <h3 className="font-bold text-gray-800 mb-2">{aboutHighlights.vision.title}</h3>
+                                    <p className="text-gray-600 text-sm leading-relaxed">{aboutHighlights.vision.desc}</p>
+                                </div>
+                                {/* Community */}
+                                <div className="bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-all group animate-fade-in-up animation-delay-400">
+                                    <div className="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-600 group-hover:text-white transition-colors">
+                                        <Users className="w-6 h-6" />
+                                    </div>
+                                    <h3 className="font-bold text-gray-800 mb-2">{aboutHighlights.community.title}</h3>
+                                    <p className="text-gray-600 text-sm leading-relaxed">{aboutHighlights.community.desc}</p>
+                                </div>
+                                {/* Education */}
+                                <div className="bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-all group animate-fade-in-up animation-delay-400">
+                                    <div className="w-10 h-10 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                                        <BookOpen className="w-6 h-6" />
+                                    </div>
+                                    <h3 className="font-bold text-gray-800 mb-2">{aboutHighlights.education.title}</h3>
+                                    <p className="text-gray-600 text-sm leading-relaxed">{aboutHighlights.education.desc}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div>
-                        <h2 className="text-3xl font-bold text-gray-800 mb-6 border-l-4 border-primary pl-4">Latest Sermons</h2>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-3xl font-bold text-gray-800 border-l-4 border-primary pl-4">Latest Sermons</h2>
+                            <Link to="/sermons" className="text-primary font-bold hover:underline flex items-center gap-1">
+                                View All <ExternalLink className="w-4 h-4" />
+                            </Link>
+                        </div>
                         <div className="space-y-4">
                             {sermons?.length === 0 && <p className="text-gray-500">No sermons available.</p>}
                             {sermons?.map((sermon) => (
-                                <div key={sermon.id} className="bg-white p-4 rounded shadow-sm">
+                                <Link
+                                    key={sermon.id}
+                                    to={`/sermons/${sermon.id}`}
+                                    className="block bg-white p-4 rounded shadow-sm hover:shadow-md transition-shadow group"
+                                >
                                     <div className="aspect-video bg-gray-200 rounded mb-4 flex items-center justify-center overflow-hidden relative">
                                         {sermon._embedded?.['wp:featuredmedia']?.[0]?.source_url ? (
                                             <img
                                                 src={sermon._embedded['wp:featuredmedia'][0].source_url}
                                                 alt={sermon.title.rendered}
-                                                className="w-full h-full object-cover"
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                             />
                                         ) : (
                                             <Video className="text-gray-400 w-12 h-12" />
                                         )}
                                     </div>
-                                    <h3 className="font-bold text-lg" dangerouslySetInnerHTML={{ __html: sermon.title.rendered }} />
+                                    <h3 className="font-bold text-lg group-hover:text-primary transition-colors" dangerouslySetInnerHTML={{ __html: sermon.title.rendered }} />
                                     <p className="text-gray-500 text-sm">
                                         {sermon.meta?.sermon_preacher && `By ${sermon.meta.sermon_preacher}`}
                                     </p>
                                     <div className="text-gray-600 mt-2 text-sm line-clamp-2" dangerouslySetInnerHTML={{ __html: sermon.excerpt.rendered }} />
                                     {sermon.meta?.sermon_video_url && (
-                                        <a href={sermon.meta.sermon_video_url} target="_blank" rel="noopener noreferrer" className="text-primary text-sm font-bold mt-2 inline-block hover:underline">
-                                            Watch Video
-                                        </a>
+                                        <span className="text-primary text-sm font-bold mt-2 inline-flex items-center gap-1">
+                                            Watch Video <ExternalLink className="w-3 h-3" />
+                                        </span>
                                     )}
-                                </div>
+                                </Link>
                             ))}
                         </div>
                     </div>

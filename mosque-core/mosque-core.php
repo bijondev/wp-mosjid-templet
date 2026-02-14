@@ -194,6 +194,7 @@ function mosque_get_settings() {
             'primary_color' => $primary_color,
             'logo_url'      => $logo_url,
             'main_image'    => $main_image,
+            'gallery_hero_image' => get_option( 'mosque_gallery_hero_image', '' ),
             'intro_video_url' => get_option( 'mosque_intro_video_url', '' ),
         ),
         'contact' => array(
@@ -209,6 +210,24 @@ function mosque_get_settings() {
             'instagram' => $instagram,
             'twitter'   => $twitter,
             'youtube'   => $youtube,
+        ),
+        'about_highlights' => array(
+            'mission' => array(
+                'title' => get_option( 'mosque_mission_title', 'Our Mission' ),
+                'desc'  => get_option( 'mosque_mission_desc', 'To serve Allah and our community by providing religious, educational, and social services that inspire righteousness and compassion.' ),
+            ),
+            'vision' => array(
+                'title' => get_option( 'mosque_vision_title', 'Our Vision' ),
+                'desc'  => get_option( 'mosque_vision_desc', 'To be a beacon of Islamic values and a center of excellence for spiritual growth and community development in the region.' ),
+            ),
+            'community' => array(
+                'title' => get_option( 'mosque_community_title', 'Community First' ),
+                'desc'  => get_option( 'mosque_community_desc', 'We believe in the power of unity and strive to create an inclusive environment where everyone feels welcome and supported.' ),
+            ),
+            'education' => array(
+                'title' => get_option( 'mosque_education_title', 'Lifelong Learning' ),
+                'desc'  => get_option( 'mosque_education_desc', 'Commitment to providing authentic Islamic knowledge and practical life skills through our various educational programs.' ),
+            ),
         ),
         'prayer_times' => $prayer_times,
         'nonce'        => wp_create_nonce( 'wp_rest' ), // Expose nonce for CSRF protection

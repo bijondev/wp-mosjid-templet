@@ -8,6 +8,7 @@ interface BrandingSettings {
     primaryColor: string;
     description?: string;
     mainImageUrl?: string;
+    galleryHeroImage?: string;
     introVideoUrl?: string;
 }
 
@@ -27,10 +28,23 @@ interface SocialFiles {
     youtube?: string;
 }
 
+interface Highlight {
+    title: string;
+    desc: string;
+}
+
+interface AboutHighlights {
+    mission: Highlight;
+    vision: Highlight;
+    community: Highlight;
+    education: Highlight;
+}
+
 interface SettingsState {
     branding: BrandingSettings;
     contact: ContactSettings;
     social: SocialFiles;
+    aboutHighlights: AboutHighlights;
     nonce?: string;
 }
 
@@ -52,6 +66,12 @@ const defaultSettings: SettingsState = {
         instagram: '#',
         twitter: '#',
         youtube: '#',
+    },
+    aboutHighlights: {
+        mission: { title: 'Our Mission', desc: '' },
+        vision: { title: 'Our Vision', desc: '' },
+        community: { title: 'Community First', desc: '' },
+        education: { title: 'Lifelong Learning', desc: '' },
     },
     nonce: '',
 };
@@ -90,6 +110,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                     primaryColor: fetchedSettings.branding.primary_color || defaultSettings.branding.primaryColor,
                     logoUrl: fetchedSettings.branding.logo_url,
                     mainImageUrl: fetchedSettings.branding.main_image,
+                    galleryHeroImage: fetchedSettings.branding.gallery_hero_image,
                     introVideoUrl: fetchedSettings.branding.intro_video_url,
                 },
                 contact: {
@@ -101,6 +122,24 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
                     longitude: fetchedSettings.contact.longitude || '',
                 },
                 social: fetchedSettings.social || defaultSettings.social,
+                aboutHighlights: {
+                    mission: {
+                        title: fetchedSettings.about_highlights?.mission?.title || defaultSettings.aboutHighlights.mission.title,
+                        desc: fetchedSettings.about_highlights?.mission?.desc || defaultSettings.aboutHighlights.mission.desc,
+                    },
+                    vision: {
+                        title: fetchedSettings.about_highlights?.vision?.title || defaultSettings.aboutHighlights.vision.title,
+                        desc: fetchedSettings.about_highlights?.vision?.desc || defaultSettings.aboutHighlights.vision.desc,
+                    },
+                    community: {
+                        title: fetchedSettings.about_highlights?.community?.title || defaultSettings.aboutHighlights.community.title,
+                        desc: fetchedSettings.about_highlights?.community?.desc || defaultSettings.aboutHighlights.community.desc,
+                    },
+                    education: {
+                        title: fetchedSettings.about_highlights?.education?.title || defaultSettings.aboutHighlights.education.title,
+                        desc: fetchedSettings.about_highlights?.education?.desc || defaultSettings.aboutHighlights.education.desc,
+                    },
+                },
                 nonce: fetchedSettings.nonce,
             };
 

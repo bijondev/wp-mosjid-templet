@@ -15,6 +15,7 @@ function mosque_register_settings() {
     register_setting( 'mosque_options_group', 'mosque_primary_color' );
     register_setting( 'mosque_options_group', 'mosque_logo_url' );
     register_setting( 'mosque_options_group', 'mosque_main_image_url' );
+    register_setting( 'mosque_options_group', 'mosque_gallery_hero_image' );
     register_setting( 'mosque_options_group', 'mosque_intro_video_url' );
 
     // --- Contact Group ---
@@ -35,6 +36,17 @@ function mosque_register_settings() {
     register_setting( 'mosque_options_group', 'mosque_longitude' );
     register_setting( 'mosque_options_group', 'mosque_calculation_method' );
     register_setting( 'mosque_options_group', 'mosque_juristic_school' );
+
+    // --- About Page Highlights ---
+    register_setting( 'mosque_options_group', 'mosque_mission_title' );
+    register_setting( 'mosque_options_group', 'mosque_mission_desc' );
+    register_setting( 'mosque_options_group', 'mosque_vision_title' );
+    register_setting( 'mosque_options_group', 'mosque_vision_desc' );
+    register_setting( 'mosque_options_group', 'mosque_community_title' );
+    register_setting( 'mosque_options_group', 'mosque_community_desc' );
+    register_setting( 'mosque_options_group', 'mosque_education_title' );
+    register_setting( 'mosque_options_group', 'mosque_education_title' );
+    register_setting( 'mosque_options_group', 'mosque_education_desc' );
 }
 
 // Add Options Page
@@ -91,6 +103,14 @@ function mosque_render_options_page() {
                         <input type="text" name="mosque_main_image_url" id="mosque_main_image_url" value="<?php echo esc_attr( get_option( 'mosque_main_image_url' ) ); ?>" class="regular-text" />
                         <button type="button" class="button mosque-upload-btn" data-target="mosque_main_image_url">Upload Image</button>
                     </td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Gallery Hero Image URL</th>
+                    <td>
+                        <input type="text" name="mosque_gallery_hero_image" id="mosque_gallery_hero_image" value="<?php echo esc_attr( get_option( 'mosque_gallery_hero_image' ) ); ?>" class="regular-text" />
+                        <button type="button" class="button mosque-upload-btn" data-target="mosque_gallery_hero_image">Upload Image</button>
+                    </td>
+                </tr>
                 <tr valign="top">
                     <th scope="row">Intro Video URL (YouTube/Vimeo)</th>
                     <td>
@@ -190,6 +210,45 @@ function mosque_render_options_page() {
                             ?>
                         </select>
                     </td>
+                </tr>
+
+                <tr valign="top">
+                    <td colspan="2"><h2>About Page Highlights</h2></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Mission Title</th>
+                    <td><input type="text" name="mosque_mission_title" value="<?php echo esc_attr( get_option( 'mosque_mission_title', 'Our Mission' ) ); ?>" class="regular-text" /></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Mission Description</th>
+                    <td><textarea name="mosque_mission_desc" class="large-text" rows="3"><?php echo esc_textarea( get_option( 'mosque_mission_desc', 'To serve Allah and our community by providing religious, educational, and social services that inspire righteousness and compassion.' ) ); ?></textarea></td>
+                </tr>
+                
+                <tr valign="top">
+                    <th scope="row">Vision Title</th>
+                    <td><input type="text" name="mosque_vision_title" value="<?php echo esc_attr( get_option( 'mosque_vision_title', 'Our Vision' ) ); ?>" class="regular-text" /></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Vision Description</th>
+                    <td><textarea name="mosque_vision_desc" class="large-text" rows="3"><?php echo esc_textarea( get_option( 'mosque_vision_desc', 'To be a beacon of Islamic values and a center of excellence for spiritual growth and community development in the region.' ) ); ?></textarea></td>
+                </tr>
+
+                <tr valign="top">
+                    <th scope="row">Community Title</th>
+                    <td><input type="text" name="mosque_community_title" value="<?php echo esc_attr( get_option( 'mosque_community_title', 'Community First' ) ); ?>" class="regular-text" /></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Community Description</th>
+                    <td><textarea name="mosque_community_desc" class="large-text" rows="3"><?php echo esc_textarea( get_option( 'mosque_community_desc', 'We believe in the power of unity and strive to create an inclusive environment where everyone feels welcome and supported.' ) ); ?></textarea></td>
+                </tr>
+
+                <tr valign="top">
+                    <th scope="row">Education Title</th>
+                    <td><input type="text" name="mosque_education_title" value="<?php echo esc_attr( get_option( 'mosque_education_title', 'Lifelong Learning' ) ); ?>" class="regular-text" /></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Education Description</th>
+                    <td><textarea name="mosque_education_desc" class="large-text" rows="3"><?php echo esc_textarea( get_option( 'mosque_education_desc', 'Commitment to providing authentic Islamic knowledge and practical life skills through our various educational programs.' ) ); ?></textarea></td>
                 </tr>
             </table>
             

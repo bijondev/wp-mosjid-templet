@@ -13,6 +13,7 @@ export default function Header() {
         { name: 'About', href: '/about' },
         { name: 'Prayer Times', href: '/prayer-times' },
         { name: 'Services', href: '/services' },
+        { name: 'Gallery', href: '/gallery' },
         { name: 'Events', href: '/events' },
         { name: 'Contact', href: '/contact' },
     ];

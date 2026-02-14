@@ -42,3 +42,11 @@ export interface MosqueDonation extends WPPost {
         donation_link: string;
     };
 }
+
+export interface MosqueGallery extends WPPost {
+    // Gallery currently uses title (not shown), thumbnail (image), and excerpt (caption)
+}
+
+export interface MosqueHeroSlide extends WPPost {
+    // Hero slide uses thumbnail for the background image
+}
